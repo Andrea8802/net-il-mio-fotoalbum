@@ -15,7 +15,7 @@ namespace net_il_mio_fotoalbum.Models
 
         public byte[]? Image { get; set; }
 
-        public bool Visiblity { get; set; }
+        public bool Visibility { get; set; }
 
         public List<Category>? Categories { get; set; }
     }

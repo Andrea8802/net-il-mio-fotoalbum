@@ -31,6 +31,7 @@ namespace net_il_mio_fotoalbum.Controllers
         }
 
         [HttpGet]
+        [ValidateAntiForgeryToken]
         public IActionResult Create()
         {
             using (PhotoContext db = new PhotoContext())
@@ -50,7 +51,7 @@ namespace net_il_mio_fotoalbum.Controllers
                 }
 
                 Photo photo = new Photo();
-                photo.Visiblity = true;
+                photo.Visibility = true;
 
                 model.Categories = listCategories;
                 model.Photo = photo;
@@ -91,7 +92,7 @@ namespace net_il_mio_fotoalbum.Controllers
                             Title = model.Photo.Title,
                             Description = model.Photo.Description,
                             Image = imageData,
-                            Visiblity = model.Photo.Visiblity,
+                            Visibility = model.Photo.Visibility,
                             Categories = categories
                             // Assegna altre proprietà necessarie
                         };
@@ -108,6 +109,24 @@ namespace net_il_mio_fotoalbum.Controllers
 
             // Se il modello non è valido, ritorna la vista "Create" con il modello
             return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(long id)
+        {
+            using(PhotoContext db = new PhotoContext())
+            {
+                Photo photo = db.Photos.Where(ph => ph.Id == id).FirstOrDefault();
+                if(photo != null)
+                {
+                    db.Photos.Remove(photo);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+
+                return RedirectToAction("Index");
+            }
         }
     }
 }

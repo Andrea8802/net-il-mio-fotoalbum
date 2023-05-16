@@ -17,7 +17,8 @@
                     </div>
                 </a>
                 <a href="@Url.Action("Update", "Pizza", new {Id = photo.Id})">Modifica</a>
-                <form asp-controller="Pizza" asp-action="Delete" asp-route-id="@photo.Id" method="post">
+                <form asp-controller="Photo" asp-action="Delete" asp-route-id="@photo.Id" method="post">
+                    @Html.AntiForgeryToken()
                     <button type="submit">Elimina</button>
                 </form>
  
