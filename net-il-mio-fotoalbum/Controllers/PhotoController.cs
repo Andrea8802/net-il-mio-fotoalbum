@@ -1,11 +1,34 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using net_il_mio_fotoalbum.Models;
+using System.Drawing;
 
 namespace net_il_mio_fotoalbum.Controllers
 {
     public class PhotoController : Controller
     {
+        [HttpGet]
+        public IActionResult Index()
+        {
+            using(PhotoContext db = new PhotoContext())
+            {
+                List <Photo> photos = db.Photos.ToList();
+
+                List<string> imagesData = new List<string>();
+
+                foreach(Photo photo in photos)
+                {
+                    imagesData.Add(Convert.ToBase64String(photo.Image));
+                }
+
+                PhotoFormModel model = new PhotoFormModel();
+
+                model.ListPhotos = photos;
+                model.ListImages = imagesData;
+
+                return View(model);
+            }
+        }
 
         [HttpGet]
         public IActionResult Create()
