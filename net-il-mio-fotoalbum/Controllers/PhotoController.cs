@@ -31,7 +31,6 @@ namespace net_il_mio_fotoalbum.Controllers
         }
 
         [HttpGet]
-        [ValidateAntiForgeryToken]
         public IActionResult Create()
         {
             using (PhotoContext db = new PhotoContext())
