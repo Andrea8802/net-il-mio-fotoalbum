@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using net_il_mio_fotoalbum.Models;
 using System.Drawing;
 
@@ -126,6 +128,102 @@ namespace net_il_mio_fotoalbum.Controllers
             }
 
             // Se il modello non è valido, ritorna la vista "Create" con il modello
+            return View(model);
+        }
+
+
+        [HttpGet]
+        public IActionResult Update(long id)
+        {
+            using (PhotoContext db = new PhotoContext())
+            {
+                Photo photo = db.Photos.FirstOrDefault(ph => ph.Id == id);
+
+                if (photo == null)
+                {
+                    return NotFound();
+                }
+
+                PhotoFormModel model = new PhotoFormModel();
+                List<Category> categories = db.Categories.ToList();
+
+                List<SelectListItem> listCategories = new List<SelectListItem>();
+
+                photo.Categories = new List<Category>();
+                foreach (Category category in categories)
+                {
+                    listCategories.Add(new SelectListItem
+                    {
+                        Text = category.Name,
+                        Value = category.Id.ToString(),
+                        Selected = photo.Categories.Any(c => c.Id == category.Id)
+                    });
+                }
+
+                model.Categories = listCategories;
+                model.Photo = photo;
+                model.Image = Convert.ToBase64String(photo.Image);
+
+                return View(model);
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Update(long id, PhotoFormModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                using (PhotoContext db = new PhotoContext())
+                {
+                    Photo photo = db.Photos
+                        .Include(ph => ph.Categories)
+                        .FirstOrDefault(ph => ph.Id == id);
+
+                    if (photo == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Leggi i dati dell'immagine come array di byte
+                    if (model.ImageFile != null && model.ImageFile.Length > 0)
+                    {
+                        byte[] imageData = null;
+                        using (var binaryReader = new BinaryReader(model.ImageFile.OpenReadStream()))
+                        {
+                            imageData = binaryReader.ReadBytes((int)model.ImageFile.Length);
+                        }
+
+                        photo.Image = imageData;
+                    }
+
+                    photo.Title = model.Photo.Title;
+                    photo.Description = model.Photo.Description;
+                    photo.Visibility = model.Photo.Visibility;
+
+                    if (model.SelectedCategories != null && model.SelectedCategories.Any())
+                    {
+                        // Rimuovi tutte le categorie esistenti per questa foto
+                        photo.Categories.Clear();
+
+                        // Aggiungi le categorie selezionate
+                        foreach (var categoryId in model.SelectedCategories)
+                        {
+                            int intCategoryId = int.Parse(categoryId);
+                            Category category = db.Categories.FirstOrDefault(c => c.Id == intCategoryId);
+                            if (category != null)
+                            {
+                                photo.Categories.Add(category);
+                            }
+                        }
+                    }
+
+                    db.SaveChanges();
+
+                    return RedirectToAction("Index");
+                }
+            }
+
             return View(model);
         }
 

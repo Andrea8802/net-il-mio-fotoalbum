@@ -15,7 +15,7 @@
                         <h5 class="card-title">@photo.Title</h5>
                     </div>
 
-                <a href="@Url.Action("Update", "Photo", new {Id = photo.Id})">Modifica</a>
+                <a href="@Url.Action("Update", "Photo", new {id = @photo.Id})">Modifica</a>
                 <form asp-controller="Photo" asp-action="Delete" asp-route-id="@photo.Id" method="post">
                     @Html.AntiForgeryToken()
                     <button type="submit">Elimina</button>
