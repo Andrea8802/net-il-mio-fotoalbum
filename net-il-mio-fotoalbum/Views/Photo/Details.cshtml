@@ -1,0 +1,27 @@
+﻿@model PhotoFormModel
+
+<div class="container">
+        <div class="card">
+        <img src="data:image;base64,@Model.Image" alt="Pizza1">
+            <div class="card-body">
+            <h5 class="card-title">@Model.Photo.Title</h5>
+            <p class="card-text">
+            @Model.Photo.Description
+            </p>
+            <p>
+                <strong>Categorie:</strong>
+                @{int i = 1;}
+                @foreach (Category category in Model.Photo.Categories)
+                {
+                    <div>
+                        <label>
+                            <strong>@i.</strong>
+                            @category.Name
+                        </label>
+                    </div>
+                    i++;
+                }
+            </p>
+            </div>
+        </div>
+</div>

@@ -12,6 +12,8 @@ namespace net_il_mio_fotoalbum.Models
 
         public List<string>? SelectedCategories { get; set; }
 
+        public string? Image { get; set; }
+
         public IFormFile? ImageFile { get; set; }
     }
 }

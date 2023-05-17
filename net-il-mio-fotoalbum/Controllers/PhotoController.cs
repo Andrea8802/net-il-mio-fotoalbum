@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using net_il_mio_fotoalbum.Models;
 using System.Drawing;
 
@@ -15,11 +16,11 @@ namespace net_il_mio_fotoalbum.Controllers
                 List <Photo> photos = db.Photos.ToList();
 
                 List<string> imagesData = new List<string>();
-
-                foreach(Photo photo in photos)
+                foreach (Photo photo in photos)
                 {
                     imagesData.Add(Convert.ToBase64String(photo.Image));
                 }
+
 
                 PhotoFormModel model = new PhotoFormModel();
 
@@ -27,6 +28,24 @@ namespace net_il_mio_fotoalbum.Controllers
                 model.ListImages = imagesData;
 
                 return View(model);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult Details(long id)
+        {
+            using(PhotoContext db = new PhotoContext())
+            {
+                Photo photo = db.Photos.Where(ph => ph.Id == id).Include(ph => ph.Categories).FirstOrDefault();
+
+                string imagesData = Convert.ToBase64String(photo.Image);
+
+                PhotoFormModel model = new PhotoFormModel();
+
+                model.Photo = photo;
+                model.Image = imagesData;
+
+                return View("Details", model);
             }
         }
 
