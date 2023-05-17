@@ -41,6 +41,11 @@ namespace net_il_mio_fotoalbum.Controllers
             {
                 Photo photo = db.Photos.Where(ph => ph.Id == id).Include(ph => ph.Categories).FirstOrDefault();
 
+                if (photo == null)
+                {
+                    return View("Error", "La foto cercata non esiste");
+                }
+
                 string imagesData = Convert.ToBase64String(photo.Image);
 
                 PhotoFormModel model = new PhotoFormModel();
@@ -151,46 +156,46 @@ namespace net_il_mio_fotoalbum.Controllers
         }
 
 
-            [HttpGet]
-            public IActionResult Update(long id)
+        [HttpGet]
+        public IActionResult Update(long id)
+        {
+            using (PhotoContext db = new PhotoContext())
             {
-                using (PhotoContext db = new PhotoContext())
+                Photo photo = db.Photos.FirstOrDefault(ph => ph.Id == id);
+
+                if (photo == null)
                 {
-                    Photo photo = db.Photos.FirstOrDefault(ph => ph.Id == id);
-
-                    if (photo == null)
-                    {
-                        return NotFound();
-                    }
-
-                    PhotoFormModel model = new PhotoFormModel();
-                    List<Category> categories = db.Categories.ToList();
-
-                    List<SelectListItem> listCategories = new List<SelectListItem>();
-
-                    photo.Categories = new List<Category>();
-                    foreach (Category category in categories)
-                    {
-                        listCategories.Add(new SelectListItem
-                        {
-                            Text = category.Name,
-                            Value = category.Id.ToString(),
-                            Selected = photo.Categories.Any(c => c.Id == category.Id)
-                        });
-                    }
-
-                    model.Categories = listCategories;
-                    model.Photo = photo;
-                    model.Image = Convert.ToBase64String(photo.Image);
-
-                    return View(model);
+                    return NotFound();
                 }
-            }
 
-            [HttpPost]
-            [ValidateAntiForgeryToken]
-            public IActionResult Update(long id, PhotoFormModel model)
-            {
+                PhotoFormModel model = new PhotoFormModel();
+                List<Category> categories = db.Categories.ToList();
+
+                List<SelectListItem> listCategories = new List<SelectListItem>();
+
+                photo.Categories = new List<Category>();
+                foreach (Category category in categories)
+                {
+                    listCategories.Add(new SelectListItem
+                    {
+                        Text = category.Name,
+                        Value = category.Id.ToString(),
+                        Selected = photo.Categories.Any(c => c.Id == category.Id)
+                    });
+                }
+
+                model.Categories = listCategories;
+                model.Photo = photo;
+                model.Image = Convert.ToBase64String(photo.Image);
+
+                return View(model);
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Update(long id, PhotoFormModel model)
+        {
             if (!ModelState.IsValid)
             {
                 using (PhotoContext db = new PhotoContext())
@@ -225,71 +230,71 @@ namespace net_il_mio_fotoalbum.Controllers
                 }
             }
 
-                using (PhotoContext db = new PhotoContext())
+            using (PhotoContext db = new PhotoContext())
+            {
+                Photo photo = db.Photos
+                    .Include(ph => ph.Categories)
+                    .FirstOrDefault(ph => ph.Id == id);
+
+                if (photo == null)
                 {
-                    Photo photo = db.Photos
-                        .Include(ph => ph.Categories)
-                        .FirstOrDefault(ph => ph.Id == id);
-
-                    if (photo == null)
-                    {
-                        return NotFound();
-                    }
-
-                    if (model.ImageFile != null && model.ImageFile.Length > 0)
-                    {
-                        byte[] imageData = null;
-                        using (var binaryReader = new BinaryReader(model.ImageFile.OpenReadStream()))
-                        {
-                            imageData = binaryReader.ReadBytes((int)model.ImageFile.Length);
-                        }
-
-                        photo.Image = imageData;
-                    }
-
-                    photo.Title = model.Photo.Title;
-                    photo.Description = model.Photo.Description;
-                    photo.Visibility = model.Photo.Visibility;
-
-                    if (model.SelectedCategories != null && model.SelectedCategories.Any())
-                    {
-                        photo.Categories.Clear();
-
-                        foreach (var categoryId in model.SelectedCategories)
-                        {
-                            int intCategoryId = int.Parse(categoryId);
-                            Category category = db.Categories.FirstOrDefault(c => c.Id == intCategoryId);
-                            if (category != null)
-                            {
-                                photo.Categories.Add(category);
-                            }
-                        }
-                    }
-
-                    db.SaveChanges();
-
-                    return RedirectToAction("Index");
+                    return NotFound();
                 }
 
+                if (model.ImageFile != null && model.ImageFile.Length > 0)
+                {
+                    byte[] imageData = null;
+                    using (var binaryReader = new BinaryReader(model.ImageFile.OpenReadStream()))
+                    {
+                        imageData = binaryReader.ReadBytes((int)model.ImageFile.Length);
+                    }
 
+                    photo.Image = imageData;
+                }
+
+                photo.Title = model.Photo.Title;
+                photo.Description = model.Photo.Description;
+                photo.Visibility = model.Photo.Visibility;
+
+                if (model.SelectedCategories != null && model.SelectedCategories.Any())
+                {
+                    photo.Categories.Clear();
+
+                    foreach (var categoryId in model.SelectedCategories)
+                    {
+                        int intCategoryId = int.Parse(categoryId);
+                        Category category = db.Categories.FirstOrDefault(c => c.Id == intCategoryId);
+                        if (category != null)
+                        {
+                            photo.Categories.Add(category);
+                        }
+                    }
+                }
+
+                db.SaveChanges();
+
+                return RedirectToAction("Index");
             }
 
-            [HttpPost]
-            [ValidateAntiForgeryToken]
-            public IActionResult Delete(long id)
-            {
-                using (PhotoContext db = new PhotoContext())
-                {
-                    Photo photo = db.Photos.Where(ph => ph.Id == id).FirstOrDefault();
-                    if (photo != null)
-                    {
-                        db.Photos.Remove(photo);
-                        db.SaveChanges();
-                        return RedirectToAction("Index");
-                    }
 
-                    return RedirectToAction("Index");
-                }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(long id)
+        {
+            using (PhotoContext db = new PhotoContext())
+            {
+                Photo photo = db.Photos.Where(ph => ph.Id == id).FirstOrDefault();
+
+                if (photo == null)
+                    return View("Error", "La foto cercata non esiste");
+
+                db.Photos.Remove(photo);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+
             }
         }
     }
+}
