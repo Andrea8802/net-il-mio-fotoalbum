@@ -18,7 +18,7 @@
         <div class="mb-3">
             <strong>Link Immagine:</strong>
             <input type="file" asp-for="ImageFile" class="d-block w-100" />
-            <span asp-validation-for="Photo.Image" class="text-danger"></span>
+            <span asp-validation-for="ImageFile" class="text-danger"></span>
         </div>
         <div class="mb-3">
             <strong>Visibility:</strong>
@@ -33,7 +33,7 @@
             <select asp-for="SelectedCategories" multiple="multiple" asp-items="Model.Categories" size="10"
                     class="form-control mb-2 mr-sm-2 ml-sm-3 leftList">
             </select>
-            <span asp-validation-for="Categories" class="text-danger"></span>
+            <span asp-validation-for="SelectedCategories" class="text-danger"></span>
 
         </div>
 

@@ -1,25 +1,22 @@
-﻿@model PhotoFormModel
-
+﻿@model Photo
+@{string image = ViewData["Image"] as string;}
 <div class="container">
         <div class="card">
-        <img src="data:image;base64,@Model.Image" alt="Pizza1">
+        <img src="data:image;base64,@image" alt="Pizza1">
             <div class="card-body">
-            <h5 class="card-title">@Model.Photo.Title</h5>
+            <h5 class="card-title">@Model.Title</h5>
             <p class="card-text">
-            @Model.Photo.Description
+            @Model.Description
             </p>
             <p>
                 <strong>Categorie:</strong>
-                @{int i = 1;}
-                @foreach (Category category in Model.Photo.Categories)
+                @foreach (Category category in Model.Categories)
                 {
                     <div>
                         <label>
-                            <strong>@i.</strong>
                             @category.Name
                         </label>
                     </div>
-                    i++;
                 }
             </p>
             </div>

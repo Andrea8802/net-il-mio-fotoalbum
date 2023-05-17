@@ -25,12 +25,8 @@ namespace net_il_mio_fotoalbum.Controllers
                 }
 
 
-                PhotoFormModel model = new PhotoFormModel();
-
-                model.ListPhotos = photos;
-                model.ListImages = imagesData;
-
-                return View(model);
+                ViewData["Images"] = imagesData;
+                return View(photos);
             }
         }
 
@@ -48,12 +44,9 @@ namespace net_il_mio_fotoalbum.Controllers
 
                 string imagesData = Convert.ToBase64String(photo.Image);
 
-                PhotoFormModel model = new PhotoFormModel();
+                ViewData["Image"] = imagesData;
 
-                model.Photo = photo;
-                model.Image = imagesData;
-
-                return View("Details", model);
+                return View("Details", photo);
             }
         }
 
@@ -186,7 +179,7 @@ namespace net_il_mio_fotoalbum.Controllers
 
                 model.Categories = listCategories;
                 model.Photo = photo;
-                model.Image = Convert.ToBase64String(photo.Image);
+                ViewData["Image"] = Convert.ToBase64String(photo.Image);
 
                 return View(model);
             }
@@ -224,7 +217,7 @@ namespace net_il_mio_fotoalbum.Controllers
 
                     model.Categories = listCategories;
                     model.Photo = photo;
-                    model.Image = Convert.ToBase64String(photo.Image);
+                    ViewData["Image"] = Convert.ToBase64String(photo.Image);
 
                     return View(model);
                 }

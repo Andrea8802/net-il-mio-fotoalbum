@@ -1,5 +1,7 @@
 ﻿@model PhotoFormModel
-
+@{
+    string images = ViewData["Image"] as string;
+}
 <div class="container">
     <form asp-controller="Photo" asp-action="Update" method="post" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
@@ -22,7 +24,8 @@
         </div>
         <div class="mb-3">
             <strong>Link Immagine:</strong>
-            <img src="data:image;base64,@Model.Image" alt="Pizza1">
+            <img src="data:image;base64,@images" alt="Pizza1">
+            <span asp-validation-for="ImageFile" class="text-danger"></span>
         </div>
         <div class="mb-3">
             <strong>Visibility:</strong>

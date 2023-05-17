@@ -1,16 +1,20 @@
-﻿@model PhotoFormModel
+﻿@model List<Photo>
+@{
+    List<string> images = ViewData["Images"] as List<string>;
+}
+
 
 <ul class="container flex-wrap">
     @{
         int i = 0;
     }
-    @foreach(Photo photo in Model.ListPhotos)
+    @foreach(Photo photo in Model)
     {
         
             <li class="card">
                 <a href="@Url.Action("Details", "Photo", new{id=@photo.Id})"
                    style="text-decoration: none; color: black;">
-                <img src="data:image;base64,@Model.ListImages[i]" alt="photo" />
+                <img src="data:image;base64,@images[i]" alt="photo" />
                     <div class="card-body">
                         <h5 class="card-title">@photo.Title</h5>
                     </div>
