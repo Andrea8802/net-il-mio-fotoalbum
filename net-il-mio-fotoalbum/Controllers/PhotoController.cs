@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +15,7 @@ namespace net_il_mio_fotoalbum.Controllers
         {
             using (PhotoContext db = new PhotoContext())
             {
+
                 List<Photo> photos = db.Photos.Where(ph => ph.Visibility == true).ToList();
 
                 List<string> imagesData = new List<string>();
@@ -26,7 +27,10 @@ namespace net_il_mio_fotoalbum.Controllers
 
 
                 ViewData["Images"] = imagesData;
+
                 return View(photos);
+
+
             }
         }
 
@@ -50,6 +54,27 @@ namespace net_il_mio_fotoalbum.Controllers
             }
         }
 
+        [HttpPost]
+        public IActionResult Research(string word)
+        {
+           using(PhotoContext db = new PhotoContext())
+            {
+
+                List<Photo> photos = db.Photos.Where(ph => ph.Title.Contains(word)).ToList();
+                List<string> imagesData = new List<string>();
+
+                foreach (Photo photo in photos)
+                {
+                    imagesData.Add(Convert.ToBase64String(photo.Image));
+                }
+
+                ViewData["Images"] = imagesData;
+
+                return View("Index", photos);
+            } 
+        }
+
+        [Authorize("ADMIN")]
         [HttpGet]
         public IActionResult Create()
         {
@@ -78,6 +103,8 @@ namespace net_il_mio_fotoalbum.Controllers
             }
         }
 
+
+        [Authorize("ADMIN")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(PhotoFormModel model)
@@ -149,6 +176,7 @@ namespace net_il_mio_fotoalbum.Controllers
         }
 
 
+        [Authorize("ADMIN")]
         [HttpGet]
         public IActionResult Update(long id)
         {
@@ -185,6 +213,8 @@ namespace net_il_mio_fotoalbum.Controllers
             }
         }
 
+
+        [Authorize("ADMIN")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Update(long id, PhotoFormModel model)
@@ -272,6 +302,8 @@ namespace net_il_mio_fotoalbum.Controllers
 
         }
 
+
+        [Authorize("ADMIN")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(long id)

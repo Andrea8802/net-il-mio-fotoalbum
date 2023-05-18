@@ -1,7 +1,14 @@
 ﻿@model List<Photo>
 @{
     List<string> images = ViewData["Images"] as List<string>;
+    string word = ViewData["Word"] as string;
 }
+
+<form asp-controller="Photo" asp-action="Research" method="post">
+    @Html.AntiForgeryToken()
+    <input asp-for="@word" class="d-block w-100" />
+    <button type="submit">Elimina</button>
+</form>
 
 
 <ul class="container flex-wrap">
