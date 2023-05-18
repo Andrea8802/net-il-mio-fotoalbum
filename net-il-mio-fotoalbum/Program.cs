@@ -9,10 +9,9 @@ namespace net_il_mio_fotoalbum
         {
             var builder = WebApplication.CreateBuilder(args);
                         
-                    builder.Services.AddDbContext<PhotoContext>();
+            builder.Services.AddDbContext<PhotoContext>();
 
-                                                builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<PhotoContext>();
+            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>().AddEntityFrameworkStores<PhotoContext>();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();

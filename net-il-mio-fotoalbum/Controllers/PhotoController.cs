@@ -81,7 +81,7 @@ namespace net_il_mio_fotoalbum.Controllers
             } 
         }
 
-        [Authorize("ADMIN")]
+        [Authorize(Roles = "ADMIN")]
         [HttpGet]
         public IActionResult Create()
         {
@@ -111,7 +111,7 @@ namespace net_il_mio_fotoalbum.Controllers
         }
 
 
-        [Authorize("ADMIN")]
+        [Authorize(Roles = "ADMIN")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(PhotoFormModel model)
@@ -183,7 +183,7 @@ namespace net_il_mio_fotoalbum.Controllers
         }
 
 
-        [Authorize("ADMIN")]
+        [Authorize(Roles = "ADMIN")]
         [HttpGet]
         public IActionResult Update(long id)
         {
@@ -221,7 +221,7 @@ namespace net_il_mio_fotoalbum.Controllers
         }
 
 
-        [Authorize("ADMIN")]
+        [Authorize(Roles = "ADMIN")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Update(long id, PhotoFormModel model)
@@ -310,7 +310,7 @@ namespace net_il_mio_fotoalbum.Controllers
         }
 
 
-        [Authorize("ADMIN")]
+        [Authorize(Roles = "ADMIN")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(long id)

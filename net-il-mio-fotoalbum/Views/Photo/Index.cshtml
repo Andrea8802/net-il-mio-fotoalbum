@@ -25,13 +25,16 @@
                     <div class="card-body">
                         <h5 class="card-title">@photo.Title</h5>
                     </div>
-
-                <a href="@Url.Action("Update", "Photo", new {id = @photo.Id})">Modifica</a>
-                <form asp-controller="Photo" asp-action="Delete" asp-route-id="@photo.Id" method="post">
-                    @Html.AntiForgeryToken()
-                    <button type="submit">Elimina</button>
-                </form>
-            </a>
+                @if (User.IsInRole("ADMIN"))
+                {
+                    <a href="@Url.Action("Update", "Photo", new {id = @photo.Id})">Modifica</a>
+                    <form asp-controller="Photo" asp-action="Delete" asp-route-id="@photo.Id" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit">Elimina</button>
+                    </form>
+                }
+               
+                </a>
  
             </li>
         i++;
