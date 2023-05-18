@@ -60,13 +60,20 @@ namespace net_il_mio_fotoalbum.Controllers
            using(PhotoContext db = new PhotoContext())
             {
 
-                List<Photo> photos = db.Photos.Where(ph => ph.Title.Contains(word)).ToList();
+                List<Photo> photos = db.Photos
+                    .Where(ph => ph.Title.Contains(word) && ph.Visibility)
+                    .ToList();
+
+                if (photos.Count <= 0)
+                    return View("Error", "Nessuna foto trovata!");
+
                 List<string> imagesData = new List<string>();
 
                 foreach (Photo photo in photos)
                 {
                     imagesData.Add(Convert.ToBase64String(photo.Image));
                 }
+
 
                 ViewData["Images"] = imagesData;
 
